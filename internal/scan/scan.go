@@ -68,3 +68,8 @@ func DiscoverEXEs() ([]Game, error) {
 	}
 	return games, nil
 }
+
+func TestingRootPath() (string, error) {
+	//
+	return "", nil
+}
