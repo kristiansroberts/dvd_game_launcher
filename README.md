@@ -8,10 +8,10 @@ It is important that the dvd file structure looks like this:
 /Collection
     launcher.exe (this program)
     /Game1
-        <your game here>
+        <your game exe here>
         <other game files here>
     /Game2
-        <your game here>
+        <your game exe here>
         <other game files here>
     /Extras
         Manuals/
