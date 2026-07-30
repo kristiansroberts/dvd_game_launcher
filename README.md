@@ -1,4 +1,13 @@
 # Dvd Game Launcher
+Dvd Game Launcher is a simple launcher for video games, letting you put together a disc with multiple DRM-free and titles along with any extras, such as manuals, artwork or OSTs and present them through one simple menu.
+
+## Why
+With the preservation of digital media being more important now than ever, Dvd Game Launcher is an artistic approach to maintaining those efforts. Inspired by the brilliant program, DvdStyler, it allows users a creative way to simply accessing their games, without having to actually navigate the dvd's file structure when deciding to play from it.
+
+Because it is lightweight and only depends on being present within the files, backing up the dvd to a drive or computer won't have any impact.
+
+## Stack
+Dvd Game Launcher is written entirely in Go. It utilizes the Fyne package for its UI elements.
 
 ## How To
 ### Expected DVD File Structure
