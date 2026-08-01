@@ -11,8 +11,8 @@ Dvd Game Launcher is written entirely in Go. It utilizes the Fyne package for it
 
 ## How To
 ### Expected DVD File Structure
+Assuming control over the internal file structure for your DVD is not within the scope of this project, it is important that the dvd file structure looks like this:
 
-It is important that the dvd file structure looks like this:
 ``` text or
 /Collection
     launcher.exe (this program)
@@ -30,7 +30,9 @@ It is important that the dvd file structure looks like this:
         ui_background.png
         logo.png
 ```
-You may also check the examples folder in this repo where examples/structure is your game collection
+You may also check the examples folder in this repo where examples/structure is your game collection. 
+
+The only file changes this program will make is to output save data to a local drive, as saves will not be written to the dvd.
 
 ### Asset Structure
 

@@ -11,7 +11,7 @@ import (
 const DEBUG = true
 
 func main() {
-	games, err := scan.DiscoverEXEs()
+	games, err := scan.DiscoverGames()
 	var gameslist []string
 	if err != nil {
 		fmt.Println("Error discovering EXEs:", err)
