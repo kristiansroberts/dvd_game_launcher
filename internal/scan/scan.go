@@ -92,19 +92,59 @@ func DiscoverExtras() (config.Extras, error) {
 	return config.Extras{}, errors.New("No extras directory found")
 }
 
-// helper to determine what type an extra subdirectory is based on its name
-// func determineExtraItemType(dir string) string {
-// 	// Check for specific subdirectories to determine the type of extra
-// 	subDirs := map[string]string{
-// 		strings.ToLower("art"):    "Art",
-// 		strings.ToLower("ost"):    "OST",
-// 		strings.ToLower("manual"): "Manual",
-// 		strings.ToLower("video"):  "Video",
-// 	}
-// 	for subDir, extraType := range subDirs {
-// 		if _, err := os.Stat(filepath.Join(dir, subDir)); err == nil {
-// 			return extraType
-// 		}
-// 	}
-// 	return "Unknown"
-// }
+// helper to determine what type an extra subdirectory is based on its directory name or file type
+func determineExtraItemType(dir, file string) config.ExtraType {
+	folder := strings.ToLower(dir)
+	// check if the directory name matches any known extra types
+	switch folder {
+	case "art", "artwork", "images", "pictures":
+		return config.ExtraTypeArt
+	case "ost", "soundtrack", "music", "sounds", "audio":
+		return config.ExtraTypeOST
+	case "manual", "manuals":
+		return config.ExtraTypeManual
+	case "video", "videos", "trailers":
+		return config.ExtraTypeVideo
+	default:
+		// if not, check the file extension to determine the type
+		ext := strings.ToLower(filepath.Ext(file))
+		switch ext {
+		case ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff":
+			return config.ExtraTypeArt
+		case ".mp3", ".flac", ".wav", ".ogg":
+			return config.ExtraTypeOST
+		case ".pdf", ".doc", ".docx", ".txt":
+			return config.ExtraTypeManual
+		case ".mp4", ".avi", ".mkv":
+			return config.ExtraTypeVideo
+		default:
+			return config.ExtraTypeUnknown
+		}
+	}
+}
+
+func DiscoverExtraItems(extraDir string) ([]config.ExtraItem, error) {
+	var extraItems []config.ExtraItem
+	err := filepath.Walk(extraDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			dir := filepath.Base(filepath.Dir(path))
+			extraType := determineExtraItemType(dir, info.Name())
+			if extraType != config.ExtraTypeUnknown {
+				extraItems = append(extraItems, config.ExtraItem{
+					Name:      info.Name(),
+					ExtraType: extraType,
+					FilePath:  path,
+				})
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return extraItems, nil
+}
