@@ -42,6 +42,22 @@ const (
 	ExtraTypeVideo
 )
 
+// String method for ExtraType to provide an actual string representation of the enum value
+func (et ExtraType) String() string {
+	switch et {
+	case ExtraTypeArt:
+		return "Art"
+	case ExtraTypeOST:
+		return "OST"
+	case ExtraTypeManual:
+		return "Manual"
+	case ExtraTypeVideo:
+		return "Video"
+	default:
+		return "Unknown"
+	}
+}
+
 // item level struct to represent an instance of an extra resource
 type ExtraItem struct {
 	Name      string
