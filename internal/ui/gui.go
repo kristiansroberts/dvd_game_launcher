@@ -16,9 +16,13 @@ import (
 
 func Gui() {
 	a := app.New()
+	icon, err := fyne.LoadResourceFromPath("./icon.ico")
+	if err == nil {
+		a.SetIcon(icon)
+	}
 	w := a.NewWindow("Dvd Game Launcher")
 
-	_, err := showMainMenu(w)
+	_, err = showMainMenu(w)
 	if err != nil {
 		return
 	}
@@ -67,6 +71,7 @@ func showMainMenu(w fyne.Window) ([]fyne.CanvasObject, error) {
 	return buttons, nil
 }
 
+// shows the extras menu with buttons for each extra item, includes a back button to return to the main menu
 func showExtrasMenu(w fyne.Window, e config.Extras) error {
 	var buttons []fyne.CanvasObject
 
@@ -81,18 +86,25 @@ func showExtrasMenu(w fyne.Window, e config.Extras) error {
 		w.ShowAndRun()
 		return err
 	}
-	for _, item := range extraItems {
-		extraItem := item
-		label := displayNameFromExe(extraItem.FilePath)
+	for _, extraItem := range extraItems {
+		// construct a "sub-folder" in the app for the extra item based on its type, organizing it regardless of file structure
+		extraType := scan.DetermineExtraItemType(filepath.Base(filepath.Dir(extraItem.FilePath)), extraItem.Name)
+		label := extraType.String()
 		btn := widget.NewButton(label, func() {
-			if err := actions.LaunchEXE(extraItem.FilePath); err != nil {
-				widget.NewLabel(fmt.Sprintf("Error launching extra item: %v", err))
+			if err := showExtrasTypeMenu(w, extraType); err != nil {
+				widget.NewLabel(fmt.Sprintf("Error launching extra type menu: %v", err))
 			}
 		})
 		buttons = append(buttons, btn)
 	}
 
 	w.SetContent(container.NewVBox(buttons...))
+	return nil
+}
+
+func showExtrasTypeMenu(w fyne.Window, extraType config.ExtraType) error {
+	// Placeholder implementation for showing extras of a specific type
+	w.SetContent(widget.NewLabel(fmt.Sprintf("Showing extras of type: %s", extraType.String())))
 	return nil
 }
 

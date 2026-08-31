@@ -93,7 +93,7 @@ func DiscoverExtras() (config.Extras, error) {
 }
 
 // helper to determine what type an extra subdirectory is based on its directory name or file type
-func determineExtraItemType(dir, file string) config.ExtraType {
+func DetermineExtraItemType(dir, file string) config.ExtraType {
 	folder := strings.ToLower(dir)
 	// check if the directory name matches any known extra types
 	switch folder {
@@ -131,7 +131,7 @@ func DiscoverExtraItems(extraDir string) ([]config.ExtraItem, error) {
 		}
 		if !info.IsDir() {
 			dir := filepath.Base(filepath.Dir(path))
-			extraType := determineExtraItemType(dir, info.Name())
+			extraType := DetermineExtraItemType(dir, info.Name())
 			if extraType != config.ExtraTypeUnknown {
 				extraItems = append(extraItems, config.ExtraItem{
 					Name:      info.Name(),
