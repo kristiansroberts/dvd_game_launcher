@@ -2,6 +2,7 @@ package scan
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -127,7 +128,7 @@ func DiscoverExtraItems(extraDir string) ([]config.ExtraItem, error) {
 	var extraItems []config.ExtraItem
 	err := filepath.Walk(extraDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return err
+			return fmt.Errorf("filepath walk: %w", err)
 		}
 		if !info.IsDir() {
 			dir := filepath.Base(filepath.Dir(path))

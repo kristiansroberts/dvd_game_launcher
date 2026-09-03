@@ -47,9 +47,12 @@ func showMainMenu(w fyne.Window) ([]fyne.CanvasObject, error) {
 		btn := widget.NewButton(label, func() {
 			if err := actions.LaunchEXE(game.ExePath); err != nil {
 				widget.NewLabel(fmt.Sprintf("Error launching game: %v", err))
+
 			}
+			fyne.CurrentApp().Quit()
 		})
 		buttons = append(buttons, btn)
+
 	}
 
 	extras, err := scan.DiscoverExtras()
@@ -82,7 +85,9 @@ func showExtrasMenu(w fyne.Window, e config.Extras) error {
 
 	extraItems, err := scan.DiscoverExtraItems(e.Dir)
 	if err != nil {
-		w.SetContent(widget.NewLabel("Error discovering extra items: " + err.Error()))
+		fmt.Println(err)
+		w.SetContent(widget.NewLabel(" " + err.Error()))
+
 		w.ShowAndRun()
 		return err
 	}
@@ -91,7 +96,7 @@ func showExtrasMenu(w fyne.Window, e config.Extras) error {
 		extraType := scan.DetermineExtraItemType(filepath.Base(filepath.Dir(extraItem.FilePath)), extraItem.Name)
 		label := extraType.String()
 		btn := widget.NewButton(label, func() {
-			if err := showExtrasTypeMenu(w, extraType); err != nil {
+			if err := showExtrasTypeMenu(w, e, extraItems, extraType); err != nil {
 				widget.NewLabel(fmt.Sprintf("Error launching extra type menu: %v", err))
 			}
 		})
@@ -102,9 +107,32 @@ func showExtrasMenu(w fyne.Window, e config.Extras) error {
 	return nil
 }
 
-func showExtrasTypeMenu(w fyne.Window, extraType config.ExtraType) error {
-	// Placeholder implementation for showing extras of a specific type
-	w.SetContent(widget.NewLabel(fmt.Sprintf("Showing extras of type: %s", extraType.String())))
+// shows a menu for each menu button created in showExtrasMenu
+func showExtrasTypeMenu(w fyne.Window, e config.Extras, items []config.ExtraItem, et config.ExtraType) error {
+	var buttons []fyne.CanvasObject
+
+	homeButton := widget.NewButton("Home", func() {
+		showMainMenu(w)
+	})
+	backButton := widget.NewButton("Back", func() {
+		showExtrasMenu(w, e)
+	})
+	buttons = append(buttons, homeButton, backButton)
+
+	for _, item := range items {
+		if item.ExtraType != et {
+			continue
+		}
+		label := item.Name
+		btn := widget.NewButton(label, func() {
+			if err := openExtraItem(w, item); err != nil {
+				w.SetContent(widget.NewLabel(err.Error()))
+			}
+		})
+		buttons = append(buttons, btn)
+	}
+
+	w.SetContent(container.NewVBox(buttons...))
 	return nil
 }
 
@@ -116,4 +144,11 @@ func displayNameFromExe(exePath string) string {
 		return name
 	}
 	return strings.ToUpper(name[:1]) + name[1:]
+}
+
+func openExtraItem(w fyne.Window, item config.ExtraItem) error {
+	// implement the logic to open the extra item here
+	// for now, just print the item name
+	fmt.Println("Opening extra item:", item.Name)
+	return nil
 }
